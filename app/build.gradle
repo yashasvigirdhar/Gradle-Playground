@@ -76,8 +76,17 @@ class VersionCodeTask extends DefaultTask {
 
 task commitToGit <<  {
     group 'GradlePlayground'
-    grgit.add(patterns: ['app/version.properties'])
-    grgit.commit(message: "Update version code")
+    def versionPropsFile = project.file('version.properties')
+    Properties versionProps = new Properties()
+    if (versionPropsFile.canRead()) {
+        versionProps.load(new FileInputStream(versionPropsFile))
+        def code = versionProps['VERSION_CODE'].toInteger() + 1
+        grgit.add(patterns: ['app/version.properties'])
+        grgit.commit(message: "Update version code to $code")
+        grgit.push()
+    } else {
+        throw new GradleException("can't find version.properties file")
+    }
 }
 
 updateVersionCode.finalizedBy commitToGit
