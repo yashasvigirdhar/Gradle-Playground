@@ -1,3 +1,4 @@
+
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
@@ -7,8 +8,9 @@ apply plugin: 'kotlin-android-extensions'
 apply from: '../gitutils.gradle'
 
 
-def VERSION_PROPERTIES_FILE_NAME = 'version.properties'
+def VERSION_PROPERTIES_FILE_NAME = "version.properties"
 def VERSION_CODE_KEY = "VERSION_CODE"
+def VERSION_PROPERTIES_PATH = "app/version.properties"
 
 android {
     compileSdkVersion 27
@@ -49,44 +51,40 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
-task updateVersionCode(type: VersionCodeTask) {
+task updateVersionCode() {
     group 'GradlePlayground'
-    description 'updates version code'
-}
-
-class VersionCodeTask extends DefaultTask {
-
-    @TaskAction
-    void updateVersionCode() {
-        def versionPropsFile = project.file('version.properties')
+    description 'updates version code in a separate commit'
+    doLast {
+        def versionPropsFile = project.file(VERSION_PROPERTIES_FILE_NAME)
         Properties versionProps = new Properties()
         if (versionPropsFile.canRead()) {
             versionProps.load(new FileInputStream(versionPropsFile))
+            def code = versionProps[VERSION_CODE_KEY].toInteger() + 1
+            versionProps[VERSION_CODE_KEY] = code.toString()
+            versionProps.store(versionPropsFile.newWriter(), null)
         } else {
-            versionProps['VERSION_CODE'] = '0'
+            throw new GradleException("can't find version.properties file")
         }
-
-        def code = versionProps['VERSION_CODE'].toInteger() + 1
-        print "New version code: $code"
-
-        versionProps['VERSION_CODE'] = code.toString()
-        versionProps.store(versionPropsFile.newWriter(), null)
     }
 }
 
-task commitToGit <<  {
+task commitVersionProperties() {
     group 'GradlePlayground'
-    def versionPropsFile = project.file('version.properties')
-    Properties versionProps = new Properties()
-    if (versionPropsFile.canRead()) {
-        versionProps.load(new FileInputStream(versionPropsFile))
-        def code = versionProps['VERSION_CODE'].toInteger() + 1
-        grgit.add(patterns: ['app/version.properties'])
-        grgit.commit(message: "Update version code to $code")
-        grgit.push()
-    } else {
-        throw new GradleException("can't find version.properties file")
+    description 'commits unsaved changes in version.properties'
+    doLast {
+        def versionPropsFile = project.file(VERSION_PROPERTIES_FILE_NAME)
+        Properties versionProps = new Properties()
+        if (versionPropsFile.canRead()) {
+            versionProps.load(new FileInputStream(versionPropsFile))
+            def code = versionProps[VERSION_CODE_KEY].toInteger()
+            grgit.add(patterns: [VERSION_PROPERTIES_PATH])
+            grgit.commit(message: "Update version code to $code")
+            grgit.push()
+            print "version code: $code updated successfully"
+        } else {
+            throw new GradleException("can't find version.properties file")
+        }
     }
 }
 
-updateVersionCode.finalizedBy commitToGit
+updateVersionCode.finalizedBy commitVersionProperties
