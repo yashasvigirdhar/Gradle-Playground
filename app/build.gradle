@@ -60,6 +60,7 @@ task updateVersionCode() {
         if (versionPropsFile.canRead()) {
             versionProps.load(new FileInputStream(versionPropsFile))
             def code = versionProps[VERSION_CODE_KEY].toInteger() + 1
+            logger.lifecycle("updating version code to $code")
             versionProps[VERSION_CODE_KEY] = code.toString()
             versionProps.store(versionPropsFile.newWriter(), null)
         } else {
