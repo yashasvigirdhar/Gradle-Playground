@@ -1,3 +1,5 @@
+import com.yashasvi.easyci.CommitVersionPropertiesTask
+import com.yashasvi.easyci.UpdateVersionCodeTask
 
 apply plugin: 'com.android.application'
 
@@ -10,7 +12,6 @@ apply from: '../gitutils.gradle'
 
 def VERSION_PROPERTIES_FILE_NAME = "version.properties"
 def VERSION_CODE_KEY = "VERSION_CODE"
-def VERSION_PROPERTIES_PATH = "app/version.properties"
 
 android {
     compileSdkVersion 27
@@ -51,41 +52,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
-task updateVersionCode() {
-    group 'GradlePlayground'
-    description 'updates version code in a separate commit'
-    doLast {
-        def versionPropsFile = project.file(VERSION_PROPERTIES_FILE_NAME)
-        Properties versionProps = new Properties()
-        if (versionPropsFile.canRead()) {
-            versionProps.load(new FileInputStream(versionPropsFile))
-            def code = versionProps[VERSION_CODE_KEY].toInteger() + 1
-            logger.lifecycle("updating version code to $code")
-            versionProps[VERSION_CODE_KEY] = code.toString()
-            versionProps.store(versionPropsFile.newWriter(), null)
-        } else {
-            throw new GradleException("can't find version.properties file")
-        }
-    }
-}
-
-task commitVersionProperties() {
-    group 'GradlePlayground'
-    description 'commits unsaved changes in version.properties'
-    doLast {
-        def versionPropsFile = project.file(VERSION_PROPERTIES_FILE_NAME)
-        Properties versionProps = new Properties()
-        if (versionPropsFile.canRead()) {
-            versionProps.load(new FileInputStream(versionPropsFile))
-            def code = versionProps[VERSION_CODE_KEY].toInteger()
-            grgit.add(patterns: [VERSION_PROPERTIES_PATH])
-            grgit.commit(message: "Update version code to $code")
-            grgit.push()
-            print "version code: $code updated successfully"
-        } else {
-            throw new GradleException("can't find version.properties file")
-        }
-    }
-}
+task updateVersionCode(type: UpdateVersionCodeTask)
+task commitVersionProperties(type: CommitVersionPropertiesTask)
 
 updateVersionCode.finalizedBy commitVersionProperties

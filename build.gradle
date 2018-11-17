@@ -15,10 +15,6 @@ buildscript {
     }
 }
 
-plugins {
-    id "org.ajoberstar.grgit" version "3.0.0-rc.2"
-}
-
 allprojects {
     repositories {
         google()
