@@ -1,4 +1,6 @@
-import com.yashasvi.easyci.plugins.EasyCIPlugin
+plugins {
+    id 'com.yashasvi.easyci'
+}
 
 apply plugin: 'com.android.application'
 
@@ -8,7 +10,6 @@ apply plugin: 'kotlin-android-extensions'
 
 apply from: '../gitutils.gradle'
 
-apply plugin: EasyCIPlugin
 
 android {
     compileSdkVersion 27
