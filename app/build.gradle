@@ -1,5 +1,4 @@
-import com.yashasvi.easyci.CommitVersionPropertiesTask
-import com.yashasvi.easyci.UpdateVersionCodeTask
+import com.yashasvi.easyci.plugins.EasyCIPlugin
 
 apply plugin: 'com.android.application'
 
@@ -8,6 +7,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 apply from: '../gitutils.gradle'
+
+apply plugin: EasyCIPlugin
 
 
 def VERSION_PROPERTIES_FILE_NAME = "version.properties"
@@ -51,8 +52,3 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
-
-task updateVersionCode(type: UpdateVersionCodeTask)
-task commitVersionProperties(type: CommitVersionPropertiesTask)
-
-updateVersionCode.finalizedBy commitVersionProperties

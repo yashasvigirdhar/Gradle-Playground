@@ -1,4 +1,4 @@
-package com.yashasvi.easyci
+package com.yashasvi.easyci.utils
 
 
 val VERSION_CODE_KEY = "VERSION_CODE"

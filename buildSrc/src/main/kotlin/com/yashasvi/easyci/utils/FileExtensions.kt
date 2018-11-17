@@ -1,4 +1,4 @@
-package com.yashasvi.easyci
+package com.yashasvi.easyci.utils
 
 import java.io.File
 

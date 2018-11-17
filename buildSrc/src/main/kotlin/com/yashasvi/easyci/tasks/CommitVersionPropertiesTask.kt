@@ -1,5 +1,9 @@
-package com.yashasvi.easyci
+package com.yashasvi.easyci.tasks
 
+import com.yashasvi.easyci.utils.GIT_DIR_PATH
+import com.yashasvi.easyci.utils.VERSION_CODE_KEY
+import com.yashasvi.easyci.utils.VERSION_PROPERTIES_PATH
+import com.yashasvi.easyci.utils.readAsMap
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.gradle.api.DefaultTask
