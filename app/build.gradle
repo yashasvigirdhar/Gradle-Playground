@@ -10,29 +10,17 @@ apply from: '../gitutils.gradle'
 
 apply plugin: EasyCIPlugin
 
-
-def VERSION_PROPERTIES_FILE_NAME = "version.properties"
-def VERSION_CODE_KEY = "VERSION_CODE"
-
 android {
     compileSdkVersion 27
-
-    def versionPropsFile = file(VERSION_PROPERTIES_FILE_NAME)
-    Properties versionProps = new Properties()
-    if (versionPropsFile.canRead()) {
-        versionProps.load(new FileInputStream(versionPropsFile))
-        def code = versionProps[VERSION_CODE_KEY].toInteger()
-        defaultConfig {
-            applicationId "com.yashasvi.gradleplayground"
-            minSdkVersion 26
-            targetSdkVersion 27
-            versionCode code
-            versionName "1.0"
-            setProperty("archivesBaseName", "v$versionName-" + "$code-" + getBranchName())
-            testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        }
-    } else {
-        throw new GradleException("version properties file not found")
+    def code = easyci.currentVersionCode
+    defaultConfig {
+        applicationId "com.yashasvi.gradleplayground"
+        minSdkVersion 26
+        targetSdkVersion 27
+        versionCode code
+        versionName "1.0"
+        setProperty("archivesBaseName", "v$versionName-" + "$code-" + getBranchName())
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {

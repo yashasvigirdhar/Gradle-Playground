@@ -12,5 +12,6 @@ class EasyCIPlugin : Plugin<Project> {
         project.tasks.create("commitVersionProperties", CommitVersionPropertiesTask::class.java)
         project.tasks.create("updateVersionCode", UpdateVersionCodeTask::class.java)
                 .finalizedBy("commitVersionProperties")
+        project.extensions.create("easyci", EasyCIExtension::class.java, project)
     }
 }
